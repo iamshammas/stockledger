@@ -16,3 +16,5 @@ class RetailerViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(tenant=self.request.user.tenant)
+
+    
