@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Purchase, PurchaseItem
+from .models import Purchase, PurchaseItem, StockMovement
 from .services import PurchaseService
 
 
@@ -37,4 +37,18 @@ class PurchaseSerializer(serializers.ModelSerializer):
             tenant=request.user.tenant,
             user=request.user,
             validated_data=validated_data,
+        )
+
+class StockMovementSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source="product.name", read_only=True)
+
+    class Meta:
+        model = StockMovement
+        fields = (
+            "id",
+            "product",
+            "product_name",
+            "movement_type",
+            "quantity_change",
+            "created_at",
         )
