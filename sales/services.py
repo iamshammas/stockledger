@@ -37,7 +37,7 @@ class SaleService:
 
         sale = Sale.objects.create(
             tenant=tenant,
-            recorded_by=user,
+            seller=user,
             invoice_number=invoice_number,
             **validated_data,
         )
@@ -85,7 +85,7 @@ class SaleService:
                     sale_item=sale_item,
                     purchase_item=batch,
                     quantity=consumed,
-                    cost_price=batch.buying_price,
+                    unit_cost=batch.buying_price,
                 )
 
                 # Create a StockMovement record for the sale    

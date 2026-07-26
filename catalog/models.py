@@ -6,6 +6,10 @@ class Category(TenantScopedModel):
 
     class Meta:
         unique_together = ("tenant", "name")
+        verbose_name_plural = "Categories"
+
+    def __str__(self):
+        return self.name
 
 
 class Brand(TenantScopedModel):
@@ -14,6 +18,9 @@ class Brand(TenantScopedModel):
     class Meta:
         unique_together = ("tenant", "name")
 
+    def __str__(self):
+        return self.name
+
 
 class Unit(TenantScopedModel):
     name = models.CharField(max_length=50)        
@@ -21,6 +28,9 @@ class Unit(TenantScopedModel):
 
     class Meta:
         unique_together = ("tenant", "name")
+
+    def __str__(self):
+        return self.name
 
 
 class Product(TenantScopedModel):
@@ -35,3 +45,6 @@ class Product(TenantScopedModel):
 
     class Meta:
         unique_together = ("tenant", "sku")
+
+    def __str__(self):
+        return self.name

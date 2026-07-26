@@ -10,4 +10,4 @@ class SaleViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Sale.objects.filter(tenant=self.request.user.tenant).select_related("seller", "customer").prefetch_related("sale_items")
+        return Sale.objects.filter(tenant=self.request.user.tenant).select_related("seller", "retailer").prefetch_related("items")

@@ -38,9 +38,9 @@ class StockMovement(models.Model):
     movement_type = models.CharField(max_length=20, choices=MovementType.choices)
     quantity_change = models.DecimalField(max_digits=12, decimal_places=3)
     related_purchase_item = models.ForeignKey(PurchaseItem, null=True, blank=True, on_delete=models.SET_NULL)
-    # related_sale_item = models.ForeignKey(
-    #     "sales.SaleItem", null=True, blank=True, on_delete=models.SET_NULL
-    # )
+    related_sale_item = models.ForeignKey(
+        "sales.SaleItem", null=True, blank=True, on_delete=models.SET_NULL
+    )
     note = models.TextField(blank=True)
     created_by = models.ForeignKey("accounts.User", null=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)

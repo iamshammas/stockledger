@@ -1,12 +1,14 @@
 from rest_framework import serializers
 
 from sales.models import Sale, SaleItem
+from sales.services import SaleService
 
 
 class SaleItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = SaleItem
         exclude = ("sale",)
+        read_only_fields = ("line_total",)
 
 class SaleSerializer(serializers.ModelSerializer):
     items = SaleItemSerializer(many=True)
@@ -19,8 +21,8 @@ class SaleSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         request = self.context["request"]
 
-        return Sale.objects.create_sale(
+        return SaleService().create_sale(
             tenant=request.user.tenant,
-            seller=request.user,
+            user=request.user,
             validated_data=validated_data,
         )

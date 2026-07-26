@@ -21,6 +21,9 @@ class BrandViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Brand.objects.filter(tenant=self.request.user.tenant)
 
+    def perform_create(self, serializer):
+        serializer.save(tenant=self.request.user.tenant)
+
 class UnitViewSet(viewsets.ModelViewSet):
     queryset = Unit.objects.all()
     serializer_class = UnitSerializer

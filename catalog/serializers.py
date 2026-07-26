@@ -43,9 +43,6 @@ class BrandSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Brand with this name already exists for this tenant.")
         return value
 
-    def perform_create(self, serializer):
-        serializer.save(tenant=self.request.user.tenant)
-
 class UnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Unit
