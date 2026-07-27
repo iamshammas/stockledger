@@ -21,8 +21,17 @@ class SaleSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         request = self.context["request"]
 
-        return SaleService().create_sale(
+        return SaleService.create_sale(
             tenant=request.user.tenant,
             user=request.user,
             validated_data=validated_data,
+        )
+
+    def update(self, instance, validated_data):
+        request = self.context["request"]
+
+        return SaleService.update_sale(
+            sale=instance,
+            validated_data=validated_data,
+            user=request.user,
         )
