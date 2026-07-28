@@ -59,6 +59,8 @@ class PaymentService:
                 note=f"Overpayment on invoice {sale.invoice_number}",
                 created_by=recorded_by,
             )
+            sale.retailer.credit_balance += excess
+            sale.retailer.save(update_fields=["credit_balance"])
 
         # --- 5. Update Sale financial fields -------------------------
         sale.amount_paid += applied_amount
