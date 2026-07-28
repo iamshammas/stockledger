@@ -7,4 +7,4 @@ class RetailerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Retailer
         fields = "__all__"
-        read_only_fields = ("tenant",)
+        read_only_fields = ("tenant","id", "credit_balance", "is_active")

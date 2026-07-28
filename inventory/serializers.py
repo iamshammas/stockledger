@@ -1,8 +1,14 @@
 from rest_framework import serializers
 
-from .models import Purchase, PurchaseItem, StockMovement
+from .models import Purchase, PurchaseItem, StockMovement, Supplier
 from .services import PurchaseService
 
+
+class SupplierSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Supplier
+        fields = '__all__'
+        read_only_fields = ("id","tenant")
 
 class PurchaseItemSerializer(serializers.ModelSerializer):
     class Meta:

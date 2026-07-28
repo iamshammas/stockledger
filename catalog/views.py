@@ -31,9 +31,15 @@ class UnitViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Unit.objects.filter(tenant=self.request.user.tenant)
 
+    def perform_create(self, serializer):
+        serializer.save(tenant=self.request.user.tenant)
+
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
     def get_queryset(self):
         return Product.objects.filter(tenant=self.request.user.tenant)
+
+    def perform_create(self, serializer):
+            serializer.save(tenant=self.request.user.tenant)

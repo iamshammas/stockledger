@@ -60,11 +60,18 @@ class UnitSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Unit with this name already exists for this tenant.")
         return value
 
-    def perform_create(self, serializer):
-        serializer.save(tenant=self.request.user.tenant)
 
 class ProductSerializer(serializers.ModelSerializer):   
     class Meta:
         model = Product
-        fields = '__all__'
-        read_only_fields = ["tenant"]
+        fields = (
+            "id",
+            "name",
+            "category",
+            "brand",
+            "unit",
+            "sku",
+            "current_selling_price",
+            "low_stock_threshold"
+        )
+        read_only_fields = ["tenant", "created_at", "updated_at", "id"]

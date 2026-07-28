@@ -1,7 +1,16 @@
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from .models import Purchase, StockMovement
-from .serializers import PurchaseSerializer, StockMovementSerializer
+from .models import Purchase, StockMovement, Supplier
+from .serializers import PurchaseSerializer, StockMovementSerializer, SupplierSerializer
 
+
+class SupplierViewSet(ModelViewSet):
+    serializer_class = SupplierSerializer
+
+    def get_queryset(self):
+        return Supplier.objects.filter(tenant=self.request.user.tenant)
+
+    def perform_create(self, serializer):
+        serializer.save(tenant=self.request.user.tenant)
 
 class PurchaseViewSet(ModelViewSet):
     serializer_class = PurchaseSerializer
