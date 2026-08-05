@@ -2,8 +2,10 @@ from decimal import Decimal
 
 from django.db import transaction
 from django.utils import timezone
+
 from jsonschema import ValidationError
 
+from common.services import PDFService
 from inventory.models import PurchaseItem, StockMovement
 
 from .models import InvoiceSequence, Sale, SaleItem, SaleItemCostAllocation
@@ -25,6 +27,17 @@ class InvoiceService:
         sequence.save(update_fields=["last_number"])
 
         return f"INV-{period_key}-{sequence.last_number:06d}"
+
+    @staticmethod
+    def generate_invoice_pdf(sale):
+        """
+        Generate a PDF for the given Sale instance.
+        """
+        context = {
+            "sale": sale,
+            "tenant": sale.tenant,
+        }
+        return PDFService.render_pdf("invoice.html", context=context)
 
 class SaleService:
 

@@ -10,27 +10,28 @@ class PaymentSerializer(serializers.ModelSerializer):
     invoice_number = serializers.CharField(
         source="sale.invoice_number", read_only=True,
     )
-    retailer_name = serializers.CharField(
-        source="sale.retailer.name", read_only=True,
-    )
-    recorded_by_username = serializers.CharField(
-        source="recorded_by.username", read_only=True,
-    )
+    # retailer_name = serializers.CharField(
+    #     source="sale.retailer.name", read_only=True,
+    # )
+    # recorded_by_username = serializers.CharField(
+    #     source="recorded_by.username", read_only=True,
+    # )
 
+    # payments = 
     class Meta:
         model = Payment
         fields = (
             "id",
             "sale",
             "invoice_number",
-            "retailer_name",
+            # "retailer_name",
             "amount",
             "payment_date",
             "payment_method",
             "note",
-            "recorded_by",
-            "recorded_by_username",
-            "created_at",
+            # "recorded_by",
+            # "recorded_by_username",
+            # "created_at",
         )
         read_only_fields = fields
 

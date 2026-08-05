@@ -43,8 +43,5 @@ class Product(TenantScopedModel):
     low_stock_threshold = models.DecimalField(max_digits=12, decimal_places=3, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
-    class Meta:
-        unique_together = ("tenant", "sku")
-
     def __str__(self):
-        return self.name
+        return f'{self.name} ({self.id})'

@@ -10,6 +10,8 @@ from tenants.models import Tenant
 
 from datetime import date
 
+from sales.models import Sale
+
 class SaleAPITest(APITestCase):
 
     def setUp(self):

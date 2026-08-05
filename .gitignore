@@ -32,3 +32,6 @@ build/
 
 # Logs
 *.log
+
+CURRENT_STATE.md
+PROJECT_CONTEXT.md

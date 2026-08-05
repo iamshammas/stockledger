@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice {{ sale.invoice_number }} — StockLedger</title>
+    <style>
+        /* ============================================================
+           RESET & PAGE SETUP
+           ============================================================ */
+        @page {
+            size: A4;
+            margin: 18mm 16mm 20mm 16mm;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ============================================================
+           BASE TYPOGRAPHY
+           ============================================================ */
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 9.5pt;
+            line-height: 1.45;
+            color: #1a1a1a;
+            background: #fff;
+        }
+
+        /* ============================================================
+           LAYOUT CONTAINER
+           ============================================================ */
+        .invoice {
+            width: 100%;
+            max-width: 178mm; /* A4 minus margins */
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .header {
+            border-bottom: 2.5pt solid #2c3e50;
+            padding-bottom: 14pt;
+            margin-bottom: 18pt;
+        }
+
+        .header-top {
+            width: 100%;
+        }
+
+        .header-top td {
+            vertical-align: top;
+            border: none;
+            padding: 0;
+        }
+
+        .company-name {
+            font-size: 20pt;
+            font-weight: 700;
+            color: #2c3e50;
+            letter-spacing: 0.5pt;
+        }
+
+        .company-phone {
+            font-size: 9pt;
+            color: #555;
+            margin-top: 4pt;
+        }
+
+        .invoice-title {
+            text-align: right;
+            font-size: 24pt;
+            font-weight: 700;
+            color: #7f8c8d;
+            letter-spacing: 1.5pt;
+            text-transform: uppercase;
+        }
+
+        /* ============================================================
+           META SECTION — Invoice Info + Retailer Info
+           ============================================================ */
+        .meta-section {
+            width: 100%;
+            margin-bottom: 20pt;
+        }
+
+        .meta-section td {
+            vertical-align: top;
+            border: none;
+            padding: 0;
+            width: 50%;
+        }
+
+        .meta-block {
+            margin-bottom: 0;
+        }
+
+        .meta-label {
+            font-size: 7pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8pt;
+            color: #7f8c8d;
+            margin-bottom: 2pt;
+        }
+
+        .meta-value {
+            font-size: 9.5pt;
+            color: #1a1a1a;
+            margin-bottom: 8pt;
+        }
+
+        .meta-value.large {
+            font-size: 11pt;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2pt 10pt;
+            font-size: 7.5pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6pt;
+            border: 1.2pt solid;
+        }
+
+        .status-paid {
+            color: #27ae60;
+            border-color: #27ae60;
+            background-color: #eafaf1;
+        }
+
+        .status-partial {
+            color: #e67e22;
+            border-color: #e67e22;
+            background-color: #fef5e7;
+        }
+
+        .status-unpaid {
+            color: #c0392b;
+            border-color: #c0392b;
+            background-color: #fdedec;
+        }
+
+        /* ============================================================
+           ITEMS TABLE
+           ============================================================ */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0;
+        }
+
+        .items-table thead th {
+            background-color: #2c3e50;
+            color: #fff;
+            font-size: 7.5pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6pt;
+            padding: 8pt 10pt;
+            border: none;
+        }
+
+        .items-table thead th:first-child {
+            text-align: left;
+        }
+
+        .items-table thead th:nth-child(2),
+        .items-table thead th:nth-child(3),
+        .items-table thead th:nth-child(4) {
+            text-align: right;
+        }
+
+        .items-table tbody td {
+            padding: 8pt 10pt;
+            border-bottom: 0.5pt solid #dce1e5;
+            font-size: 9.5pt;
+        }
+
+        .items-table tbody td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .items-table tbody td:nth-child(2),
+        .items-table tbody td:nth-child(3),
+        .items-table tbody td:nth-child(4) {
+            text-align: right;
+        }
+
+        .items-table tbody tr:last-child td {
+            border-bottom: 1.5pt solid #2c3e50;
+        }
+
+        /* ============================================================
+           SUMMARY
+           ============================================================ */
+        .summary-wrapper {
+            width: 100%;
+            margin-top: 0;
+        }
+
+        .summary-wrapper td {
+            border: none;
+            padding: 0;
+            vertical-align: top;
+        }
+
+        .summary-table {
+            width: 240pt;
+            border-collapse: collapse;
+        }
+
+        .summary-table tr td {
+            padding: 5pt 10pt;
+            font-size: 9.5pt;
+            border: none;
+        }
+
+        .summary-table tr td:first-child {
+            text-align: left;
+            color: #555;
+        }
+
+        .summary-table tr td:last-child {
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .summary-table tr.subtotal-row td {
+            padding-top: 8pt;
+        }
+
+        .summary-table tr.total-row td {
+            border-top: 1pt solid #bdc3c7;
+            padding-top: 8pt;
+            padding-bottom: 8pt;
+            font-size: 11pt;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .summary-table tr.paid-row td {
+            color: #27ae60;
+        }
+
+        .summary-table tr.due-row td {
+            border-top: 1.5pt solid #2c3e50;
+            padding-top: 8pt;
+            font-size: 11pt;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        .footer {
+            margin-top: 40pt;
+            border-top: 0.5pt solid #dce1e5;
+            padding-top: 16pt;
+        }
+
+        .footer-content {
+            width: 100%;
+        }
+
+        .footer-content td {
+            border: none;
+            padding: 0;
+            vertical-align: bottom;
+        }
+
+        .thank-you {
+            font-size: 10pt;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="invoice">
+
+        <!-- ===== HEADER ===== -->
+        <header class="header">
+            <table class="header-top">
+                <tr>
+                    <td>
+                        <div class="company-name">{{ tenant.name }}</div>
+                        <div class="company-phone">{{ tenant.phone }}</div>
+                    </td>
+                    <td>
+                        <div class="invoice-title">Invoice</div>
+                    </td>
+                </tr>
+            </table>
+        </header>
+
+        <!-- ===== META: Invoice Info + Retailer ===== -->
+        <table class="meta-section">
+            <tr>
+                <td>
+                    <div class="meta-block">
+                        <div class="meta-label">Invoice Number</div>
+                        <div class="meta-value large">{{ sale.invoice_number }}</div>
+                    </div>
+                    <div class="meta-block">
+                        <div class="meta-label">Invoice Date</div>
+                        <div class="meta-value">{{ sale.invoice_date }}</div>
+                    </div>
+                    <div class="meta-block">
+                        <div class="meta-label">Payment Status</div>
+                        <div class="meta-value">
+                            <span class="status-badge status-{{ sale.status|lower }}">
+                                {{ sale.get_status_display }}
+                            </span>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="meta-block">
+                        <div class="meta-label">Bill To</div>
+                        <div class="meta-value large">{{ sale.retailer.retailer_name }}</div>
+                    </div>
+                    <div class="meta-block">
+                        <div class="meta-label">Phone</div>
+                        <div class="meta-value">{{ sale.retailer.phone }}</div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <!-- ===== ITEMS TABLE ===== -->
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in sale.items.all %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.selling_price }}</td>
+                    <td>{{ item.line_total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- ===== SUMMARY ===== -->
+        <table class="summary-wrapper">
+            <tr>
+                <td>&nbsp;</td>
+                <td>
+                    <table class="summary-table">
+                        <tr class="subtotal-row">
+                            <td>Subtotal</td>
+                            <td>{{ sale.subtotal }}</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>Total</td>
+                            <td>{{ sale.total_amount }}</td>
+                        </tr>
+                        <tr class="paid-row">
+                            <td>Amount Paid</td>
+                            <td>{{ sale.amount_paid }}</td>
+                        </tr>
+                        <tr class="due-row">
+                            <td>Amount Due</td>
+                            <td>{{ sale.amount_due }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="footer">
+            <div class="thank-you">Thank you for your business.</div>
+        </footer>
+
+    </div>
+</body>
+</html>
