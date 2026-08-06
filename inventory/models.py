@@ -16,7 +16,7 @@ class Purchase(TenantScopedModel):
 
 class PurchaseItem(models.Model):
     purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE, related_name="items")
-    product = models.ForeignKey("catalog.Product", on_delete=models.RESTRICT)
+    product = models.ForeignKey("catalog.Product", on_delete=models.RESTRICT, related_name="purchase_items")
     quantity = models.DecimalField(max_digits=12, decimal_places=3)
     remaining_quantity = models.DecimalField(max_digits=12, decimal_places=3)   # FIFO layer tracker
     buying_price = models.DecimalField(max_digits=10, decimal_places=2)

@@ -2,12 +2,10 @@ from decimal import Decimal
 
 from django.db import transaction
 from django.utils import timezone
-
-from jsonschema import ValidationError
+from rest_framework.exceptions import ValidationError
 
 from common.services import PDFService
 from inventory.models import PurchaseItem, StockMovement
-
 from .models import InvoiceSequence, Sale, SaleItem, SaleItemCostAllocation
 
 class InvoiceService:

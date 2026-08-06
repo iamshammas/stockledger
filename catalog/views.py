@@ -1,4 +1,3 @@
-from django.db.migrations import serializer
 from rest_framework import viewsets
 from .models import Product, Category, Brand, Unit
 from .serializers import ProductSerializer, CategorySerializer, BrandSerializer, UnitSerializer

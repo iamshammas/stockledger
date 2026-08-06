@@ -1,4 +1,3 @@
-from django.db.migrations import serializer
 from rest_framework import serializers
 from .models import Product, Category, Brand, Unit
 
@@ -19,12 +18,6 @@ class CategorySerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Category with this name already exists for this tenant.")
         return value
 
-    def perform_create(self, serializer):
-        print('############################')
-        print(self.request.user)
-        print(self.request.user.tenant)
-        print('############################')
-        serializer.save(tenant=self.request.user.tenant)
 
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
