@@ -37,10 +37,11 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class PaymentCreateSerializer(serializers.Serializer):
-    """Write-only serializer for recording a new payment."""
+    """Serializer for creating a new Payment record."""
 
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
     payment_date = serializers.DateField()
+    payment_method = serializers.CharField(max_length=30, required=False, allow_blank=True)
     notes = serializers.CharField(required=False, default="", allow_blank=True)
 
     def create(self, validated_data):
@@ -48,6 +49,7 @@ class PaymentCreateSerializer(serializers.Serializer):
             sale=self.context["sale"],
             amount=validated_data["amount"],
             payment_date=validated_data["payment_date"],
+            payment_method=validated_data.get("payment_method", ""),
             notes=validated_data.get("notes", ""),
-            recorded_by=self.context["request"].user,
+            recorded_by=self.context["user"],
         )

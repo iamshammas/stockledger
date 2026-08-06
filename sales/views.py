@@ -47,9 +47,9 @@ class SaleViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
 
         # POST
-        serializer = PaymentCreateSerializer(data=request.data)
+        serializer = PaymentCreateSerializer(data=request.data, context={"sale": sale, "user": request.user})
         serializer.is_valid(raise_exception=True)
-        payment = serializer.save(context={"sale": sale, "request": request})
+        payment = serializer.save()
 
         return Response(
             PaymentSerializer(payment).data,

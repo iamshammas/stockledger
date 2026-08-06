@@ -16,7 +16,7 @@ class PaymentService:
 
     @staticmethod
     @transaction.atomic
-    def record_payment(*, sale, amount, payment_date, notes="", recorded_by):
+    def record_payment(*, sale, amount, payment_date, payment_method="", notes="", recorded_by):
         """
         Record a payment against an existing Sale.
 
@@ -33,24 +33,24 @@ class PaymentService:
             raise ValidationError("Payment amount must be greater than zero.")
 
         # --- 2. Calculate remaining due & split ----------------------
-        remaining_due = sale.amount_due
-        applied_amount = min(amount, remaining_due)
+        remaining_due = sale.amount_due 
+        applied_amount = min(amount, remaining_due) 
         excess = amount - applied_amount
 
         # --- 3. Create Payment record (always stores full amount) ----
         payment = Payment.objects.create(
-            tenant=sale.tenant,
             sale=sale,
             amount=amount,
             payment_date=payment_date,
+            payment_method=payment_method,
             note=notes,
             recorded_by=recorded_by,
+            tenant=recorded_by.tenant 
         )
 
         # --- 4. Create RetailerCredit for overpayment ----------------
         if excess > Decimal("0.00"):
             RetailerCredit.objects.create(
-                tenant=sale.tenant,
                 retailer=sale.retailer,
                 payment=payment,
                 sale=sale,
@@ -58,13 +58,15 @@ class PaymentService:
                 reason=RetailerCredit.Reason.OVERPAYMENT,
                 note=f"Overpayment on invoice {sale.invoice_number}",
                 created_by=recorded_by,
+                tenant=recorded_by.tenant
             )
             sale.retailer.credit_balance += excess
             sale.retailer.save(update_fields=["credit_balance"])
 
         # --- 5. Update Sale financial fields -------------------------
-        sale.amount_paid += applied_amount
+        sale.amount_paid += applied_amount ### CONFUSED HERE 
         sale.amount_due = sale.total_amount - sale.amount_paid
+        sale.is_edited = True  # Mark sale as edited since payment was recorded
 
         # --- 6. Derive payment status --------------------------------
         if sale.amount_paid >= sale.total_amount:
@@ -74,6 +76,6 @@ class PaymentService:
         else:
             sale.status = Sale.Status.UNPAID
 
-        sale.save(update_fields=["amount_paid", "amount_due", "status"])
+        sale.save(update_fields=["amount_paid", "amount_due", "status", "is_edited"])
 
         return payment
