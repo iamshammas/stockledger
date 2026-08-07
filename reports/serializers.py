@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from catalog.models import Product
 
-class CurrentStockSerializer(serializers.ModelSerializer):
+class CurrentStockReportSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField(source='id')
     product_name = serializers.CharField(source='name')
     category = serializers.CharField(source='category.name')
@@ -13,7 +13,7 @@ class CurrentStockSerializer(serializers.ModelSerializer):
         model = Product
         fields = ["product_id", "product_name", "category", "brand", "unit", "current_stock", "low_stock_threshold", "is_low_stock"]
 
-class StockValuationSerializer(serializers.ModelSerializer):
+class StockValuationReportSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField(source='id')
     product_name = serializers.CharField(source='name')
 
@@ -24,11 +24,16 @@ class StockValuationSerializer(serializers.ModelSerializer):
         model = Product
         fields = ["product_id", "product_name", "current_stock", "stock_value"]
 
-class DailySalesSerializer(serializers.Serializer):
+class DailySalesReportSerializer(serializers.Serializer):
     date = serializers.DateField()
     total_sales = serializers.DecimalField(max_digits=12, decimal_places=2)
     total_invoices = serializers.IntegerField()
     total_paid = serializers.DecimalField(max_digits=12, decimal_places=2)
     total_due = serializers.DecimalField(max_digits=12, decimal_places=2)
 
-    
+class MonthlySalesReportSerializer(serializers.Serializer):
+    month = serializers.DateField(format="%Y-%m")
+    total_sales = serializers.DecimalField(max_digits=12, decimal_places=2)
+    total_invoices = serializers.IntegerField()
+    total_paid = serializers.DecimalField(max_digits=12, decimal_places=2)
+    total_due = serializers.DecimalField(max_digits=12, decimal_places=2)
