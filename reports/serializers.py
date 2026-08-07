@@ -23,3 +23,12 @@ class StockValuationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ["product_id", "product_name", "current_stock", "stock_value"]
+
+class DailySalesSerializer(serializers.Serializer):
+    date = serializers.DateField()
+    total_sales = serializers.DecimalField(max_digits=12, decimal_places=2)
+    total_invoices = serializers.IntegerField()
+    total_paid = serializers.DecimalField(max_digits=12, decimal_places=2)
+    total_due = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+    
