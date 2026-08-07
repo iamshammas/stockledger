@@ -23,3 +23,18 @@ class ReportService:
                 )
             )
         )
+
+    @staticmethod
+    def get_stock_valuation_report(tenant):
+        return (
+            Product.objects.filter(
+                tenant=tenant
+            )
+            .annotate(
+                current_stock=Coalesce(Sum('purchase_items__remaining_quantity'), 
+                Value(Decimal("0.00")))
+            ).annotate(
+                stock_value=Coalesce(Sum(F('purchase_items__remaining_quantity') * F('purchase_items__buying_price')), 
+                Value(Decimal("0.00")), output_field=DecimalField(max_digits=12, decimal_places=2))
+            )
+        )
