@@ -3,6 +3,7 @@ from django.db.models.functions import Coalesce, TruncMonth
 from decimal import Decimal
 
 from catalog.models import Product
+from inventory.models import PurchaseItem
 from sales.models import Sale
 
 
@@ -68,4 +69,50 @@ class ReportService:
                 total_paid=Coalesce(Sum('amount_paid'), Value(Decimal("0.00"), output_field=DecimalField(max_digits=12, decimal_places=2))),
                 total_due=Coalesce(Sum('amount_due'), Value(Decimal("0.00"), output_field=DecimalField(max_digits=12, decimal_places=2)))
             ).order_by('month')
+        )
+
+    @staticmethod
+    def get_retailer_dues_report(tenant):
+        return (
+            Sale.objects.filter(
+                tenant=tenant,
+                amount_due__gt=0
+            ).values(
+                retailer_pk = F('retailer__id'), 
+                retailer_name = F('retailer__retailer_name'))
+            .annotate(
+                total_due=Coalesce(Sum('amount_due'), Value(Decimal("0.00"), output_field=DecimalField(max_digits=12, decimal_places=2))),
+                total_invoices=Count('id')
+            ).order_by('-total_due')
+        )
+
+    @staticmethod
+    def get_product_purchase_report(tenant):
+        return (
+            PurchaseItem.objects.filter(
+                purchase__tenant=tenant
+            ).select_related('product', 'purchase')
+            .values(
+                'product_id',
+                product_name=F('product__name')
+            ).annotate(
+                total_quantity_purchased=Coalesce(Sum('quantity'), Value(Decimal("0.000"), output_field=DecimalField(max_digits=12, decimal_places=3))),
+                total_purchase_value=Coalesce(Sum(F('quantity') * F('buying_price')), Value(Decimal("0.00"), output_field=DecimalField(max_digits=12, decimal_places=2)))
+            )
+        )
+
+    @staticmethod
+    def get_daily_purchase_report(tenant, start_date, end_date):
+        return (
+            PurchaseItem.objects.filter(
+                purchase__tenant=tenant,
+                purchase__purchase_date__range=[start_date, end_date]
+            ).select_related('product', 'purchase')
+            .values(
+                date=F('purchase__purchase_date'),
+                product_name=F('product__name'))
+            .annotate(
+                total_quantity_purchased=Coalesce(Sum('quantity'), Value(Decimal("0.000"), output_field=DecimalField(max_digits=12, decimal_places=3))),
+                total_purchase_value=Coalesce(Sum(F('quantity') * F('buying_price')), Value(Decimal("0.00"), output_field=DecimalField(max_digits=12, decimal_places=2)))
+            ).order_by('date')
         )

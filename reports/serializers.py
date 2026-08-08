@@ -37,3 +37,22 @@ class MonthlySalesReportSerializer(serializers.Serializer):
     total_invoices = serializers.IntegerField()
     total_paid = serializers.DecimalField(max_digits=12, decimal_places=2)
     total_due = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+class RetailerDuesReportSerializer(serializers.Serializer):
+    retailer_id = serializers.IntegerField(source='retailer_pk')
+    retailer_name = serializers.CharField()
+    total_due = serializers.DecimalField(max_digits=12, decimal_places=2)
+    total_invoices = serializers.IntegerField()
+
+class DailyPurchaseReportSerializer(serializers.Serializer):
+    date = serializers.DateField()
+    product_name = serializers.CharField()
+    total_quantity_purchased = serializers.DecimalField(max_digits=12, decimal_places=3)
+    total_purchase_value = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+
+class ProductPurchaseReportSerializer(serializers.Serializer):
+    product_id = serializers.IntegerField()
+    product_name = serializers.CharField()
+    total_quantity_purchased = serializers.DecimalField(max_digits=12, decimal_places=3)
+    total_purchase_value = serializers.DecimalField(max_digits=12, decimal_places=2)

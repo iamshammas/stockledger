@@ -1,9 +1,10 @@
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 
-from reports.serializers import CurrentStockReportSerializer, DailySalesReportSerializer, MonthlySalesReportSerializer, StockValuationReportSerializer
+from reports.serializers import CurrentStockReportSerializer, DailyPurchaseReportSerializer, DailySalesReportSerializer, MonthlySalesReportSerializer, ProductPurchaseReportSerializer, RetailerDuesReportSerializer, StockValuationReportSerializer
 from .services import ReportService
 
+from django.utils import timezone
 from django.utils.dateparse import parse_date
 
 
@@ -47,4 +48,43 @@ class MonthlySalesAPIView(GenericAPIView):
         
         report_data = ReportService.get_monthly_sales_report(request.user.tenant, int(year))
         serializer = self.get_serializer(report_data, many=True)
+        return Response(serializer.data)
+
+class RetailerDuesAPIView(GenericAPIView):
+    serializer_class = RetailerDuesReportSerializer
+
+    def get(self, request):
+        report_data = ReportService.get_retailer_dues_report(request.user.tenant)
+        serializer = self.get_serializer(report_data, many=True)
+        return Response(serializer.data)
+
+class PurchaseHistoryAPIView(GenericAPIView):
+     
+    def get_serializer_class(self):
+        group_by = self.request.query_params.get('group_by', 'product')
+        if group_by == 'date':
+            return DailyPurchaseReportSerializer  
+        return ProductPurchaseReportSerializer  
+
+    def get(self, request):
+        group_by = request.query_params.get('group_by', 'product')  # Default to grouping by product
+        start_date = request.query_params.get('start_date')
+        start_date = parse_date(start_date) if start_date else None
+        end_date = request.query_params.get('end_date')
+
+        # Validate dates
+        if group_by == "date":
+            if not start_date:
+                return Response({"error": "start_date is required in the format YYYY-MM-DD."}, status=400)
+            if not end_date:
+                end_date = timezone.now().date()  # Default to today if end_date is not provided
+            if start_date > end_date:
+                return Response({"error": "End date cannot be before start date"}, status=400)
+            
+            report_data = ReportService.get_daily_purchase_report(request.user.tenant, start_date, end_date)
+            
+        else:
+            report_data = ReportService.get_product_purchase_report(request.user.tenant)
+
+        serializer = self.get_serializer(report_data, many=True)    
         return Response(serializer.data)
