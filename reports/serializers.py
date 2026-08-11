@@ -9,6 +9,7 @@ class CurrentStockReportSerializer(serializers.ModelSerializer):
     unit = serializers.CharField(source='unit.name')
     current_stock = serializers.DecimalField(max_digits=12, decimal_places=3, read_only=True)
     is_low_stock = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = Product
         fields = ["product_id", "product_name", "category", "brand", "unit", "current_stock", "low_stock_threshold", "is_low_stock"]
@@ -50,9 +51,18 @@ class DailyPurchaseReportSerializer(serializers.Serializer):
     total_quantity_purchased = serializers.DecimalField(max_digits=12, decimal_places=3)
     total_purchase_value = serializers.DecimalField(max_digits=12, decimal_places=2)
 
-
 class ProductPurchaseReportSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
     product_name = serializers.CharField()
     total_quantity_purchased = serializers.DecimalField(max_digits=12, decimal_places=3)
     total_purchase_value = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+class LowStockReportSerializer(serializers.ModelSerializer):
+    product_id = serializers.IntegerField(source='id')
+    product_name = serializers.CharField(source='name')
+    current_stock = serializers.DecimalField(max_digits=12, decimal_places=3, read_only=True)
+    low_stock_threshold = serializers.DecimalField(max_digits=12, decimal_places=3, read_only=True) 
+
+    class Meta:
+        model = Product
+        fields = ["product_id", "product_name", "current_stock", "low_stock_threshold", "is_low_stock"]

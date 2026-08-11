@@ -1,7 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
+from rest_framework.views import APIView
 
-from reports.serializers import CurrentStockReportSerializer, DailyPurchaseReportSerializer, DailySalesReportSerializer, MonthlySalesReportSerializer, ProductPurchaseReportSerializer, RetailerDuesReportSerializer, StockValuationReportSerializer
+from reports.serializers import CurrentStockReportSerializer, DailyPurchaseReportSerializer, DailySalesReportSerializer, LowStockReportSerializer, MonthlySalesReportSerializer, ProductPurchaseReportSerializer, RetailerDuesReportSerializer, StockValuationReportSerializer
 from .services import ReportService
 
 from django.utils import timezone
@@ -87,4 +88,10 @@ class PurchaseHistoryAPIView(GenericAPIView):
             report_data = ReportService.get_product_purchase_report(request.user.tenant)
 
         serializer = self.get_serializer(report_data, many=True)    
+        return Response(serializer.data)
+
+class LowStockAPIView(APIView):
+    def get(self, request):
+        queryset = ReportService.get_low_stock_report(request.user.tenant)
+        serializer = LowStockReportSerializer(queryset, many=True)
         return Response(serializer.data)

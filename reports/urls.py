@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CurrentStockAPIView, DailySalesAPIView, MonthlySalesAPIView, PurchaseHistoryAPIView, RetailerDuesAPIView, StockValuationAPIView
+from .views import CurrentStockAPIView, DailySalesAPIView, LowStockAPIView, MonthlySalesAPIView, PurchaseHistoryAPIView, RetailerDuesAPIView, StockValuationAPIView
 
 urlpatterns = [
     path('current-stock/', CurrentStockAPIView.as_view(), name='current-stock'),
@@ -8,5 +8,5 @@ urlpatterns = [
     path('monthly-sales/', MonthlySalesAPIView.as_view(), name='monthly-sales'),
     path('retailer-dues/', RetailerDuesAPIView.as_view(), name='retailer-dues'),
     path('purchase-history/', PurchaseHistoryAPIView.as_view(), name='purchase-history'),
+    path('low-stock/', LowStockAPIView.as_view(), name='low-stock'),
 ]
-

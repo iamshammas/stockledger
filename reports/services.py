@@ -116,3 +116,16 @@ class ReportService:
                 total_purchase_value=Coalesce(Sum(F('quantity') * F('buying_price')), Value(Decimal("0.00"), output_field=DecimalField(max_digits=12, decimal_places=2)))
             ).order_by('date')
         )
+
+    @staticmethod
+    def get_low_stock_report(tenant):
+        return (
+            Product.objects.filter(
+                tenant=tenant)
+            .annotate(
+                current_stock=Coalesce(Sum('purchase_items__remaining_quantity'), 
+                Value(Decimal("0.000")))
+            ).filter(
+                current_stock__lte=F('low_stock_threshold')
+            )
+        ) 
