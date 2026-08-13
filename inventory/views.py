@@ -2,19 +2,15 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
 from common.permissions import IsSuperAdminOrReadOnly, IsSuperAdminOrSeller
+from common.views import TenantScopedModelViewSet
 from .models import Purchase, StockMovement, Supplier
 from .serializers import PurchaseSerializer, StockMovementSerializer, SupplierSerializer
 
 
-class SupplierViewSet(ModelViewSet):
+class SupplierViewSet(TenantScopedModelViewSet):
+    queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
     permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
-
-    def get_queryset(self):
-        return Supplier.objects.filter(tenant=self.request.user.tenant)
-
-    def perform_create(self, serializer):
-        serializer.save(tenant=self.request.user.tenant)
 
 class PurchaseViewSet(ModelViewSet):
     serializer_class = PurchaseSerializer

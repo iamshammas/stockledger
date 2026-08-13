@@ -1,10 +1,11 @@
-from rest_framework.viewsets import ModelViewSet
+from common.views import TenantScopedModelViewSet
 
 from .models import Retailer
 from .serializers import RetailerSerializer
 
 
-class RetailerViewSet(ModelViewSet):
+class RetailerViewSet(TenantScopedModelViewSet):
+    queryset = Retailer.objects.all()
     serializer_class = RetailerSerializer
 
     def get_queryset(self):
@@ -13,8 +14,5 @@ class RetailerViewSet(ModelViewSet):
             .filter(tenant=self.request.user.tenant)
             .order_by("retailer_name")
         )
-
-    def perform_create(self, serializer):
-        serializer.save(tenant=self.request.user.tenant)
 
     
