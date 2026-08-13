@@ -17,7 +17,6 @@ class CurrentStockReportSerializer(serializers.ModelSerializer):
 class StockValuationReportSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField(source='id')
     product_name = serializers.CharField(source='name')
-
     current_stock = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True)
     stock_value = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True)
 

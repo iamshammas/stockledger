@@ -1,7 +1,9 @@
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
+from common.permissions import IsSuperAdminOrSeller
 from reports.serializers import CurrentStockReportSerializer, DailyPurchaseReportSerializer, DailySalesReportSerializer, LowStockReportSerializer, MonthlySalesReportSerializer, ProductPurchaseReportSerializer, RetailerDuesReportSerializer, StockValuationReportSerializer
 from .services import ReportService
 
@@ -11,6 +13,7 @@ from django.utils.dateparse import parse_date
 
 class CurrentStockAPIView(GenericAPIView):
     serializer_class = CurrentStockReportSerializer
+    permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
 
     def get(self, request):
         queryset = ReportService.get_current_stock_report(request.user.tenant)
@@ -19,6 +22,7 @@ class CurrentStockAPIView(GenericAPIView):
 
 class StockValuationAPIView(GenericAPIView):
     serializer_class = StockValuationReportSerializer
+    permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
 
     def get(self, request):
         queryset = ReportService.get_stock_valuation_report(request.user.tenant)
@@ -27,6 +31,7 @@ class StockValuationAPIView(GenericAPIView):
 
 class DailySalesAPIView(GenericAPIView):
     serializer_class = DailySalesReportSerializer
+    permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
 
     def get(self, request):
         date_str = request.query_params.get('date')
@@ -41,6 +46,7 @@ class DailySalesAPIView(GenericAPIView):
 
 class MonthlySalesAPIView(GenericAPIView):
     serializer_class = MonthlySalesReportSerializer
+    permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
 
     def get(self, request):
         year = request.query_params.get('year')
@@ -53,6 +59,7 @@ class MonthlySalesAPIView(GenericAPIView):
 
 class RetailerDuesAPIView(GenericAPIView):
     serializer_class = RetailerDuesReportSerializer
+    permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
 
     def get(self, request):
         report_data = ReportService.get_retailer_dues_report(request.user.tenant)
@@ -60,6 +67,7 @@ class RetailerDuesAPIView(GenericAPIView):
         return Response(serializer.data)
 
 class PurchaseHistoryAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
      
     def get_serializer_class(self):
         group_by = self.request.query_params.get('group_by', 'product')
@@ -91,6 +99,8 @@ class PurchaseHistoryAPIView(GenericAPIView):
         return Response(serializer.data)
 
 class LowStockAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
+
     def get(self, request):
         queryset = ReportService.get_low_stock_report(request.user.tenant)
         serializer = LowStockReportSerializer(queryset, many=True)

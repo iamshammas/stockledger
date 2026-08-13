@@ -1,10 +1,14 @@
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.permissions import IsAuthenticated
+
+from common.permissions import IsSuperAdminOrReadOnly, IsSuperAdminOrSeller
 from .models import Purchase, StockMovement, Supplier
 from .serializers import PurchaseSerializer, StockMovementSerializer, SupplierSerializer
 
 
 class SupplierViewSet(ModelViewSet):
     serializer_class = SupplierSerializer
+    permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
 
     def get_queryset(self):
         return Supplier.objects.filter(tenant=self.request.user.tenant)
@@ -14,6 +18,7 @@ class SupplierViewSet(ModelViewSet):
 
 class PurchaseViewSet(ModelViewSet):
     serializer_class = PurchaseSerializer
+    permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
 
     def get_queryset(self):
         return Purchase.objects.filter(
@@ -22,6 +27,7 @@ class PurchaseViewSet(ModelViewSet):
 
 class StockMovementViewSet(ReadOnlyModelViewSet):
     serializer_class = StockMovementSerializer
+    permission_classes = [IsAuthenticated, IsSuperAdminOrReadOnly]
 
     def get_queryset(self):
         queryset = (

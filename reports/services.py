@@ -129,3 +129,4 @@ class ReportService:
                 current_stock__lte=F('low_stock_threshold')
             )
         ) 
+

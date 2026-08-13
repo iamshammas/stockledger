@@ -2,6 +2,9 @@ from datetime import date
 
 from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.permissions import IsAuthenticated
+
+from common.permissions import IsSuperAdminOrSeller
 
 from .models import Payment
 from .serializers import PaymentSerializer
@@ -20,6 +23,7 @@ class PaymentViewSet(ReadOnlyModelViewSet):
     """
 
     serializer_class = PaymentSerializer
+    permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
 
     def get_queryset(self):
         queryset = (
