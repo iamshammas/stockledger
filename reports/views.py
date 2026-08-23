@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
@@ -10,7 +11,7 @@ from .services import ReportService
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 
-
+@extend_schema(tags=["Reports"], summary="Retrieve Current Stock Report", description="Retrieve a report of the current stock levels for all products.")
 class CurrentStockAPIView(GenericAPIView):
     serializer_class = CurrentStockReportSerializer
     permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
@@ -19,7 +20,8 @@ class CurrentStockAPIView(GenericAPIView):
         queryset = ReportService.get_current_stock_report(request.user.tenant)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
+    
+@extend_schema(tags=["Reports"], summary="Retrieve Stock Valuation Report", description="Retrieve a report of the stock valuation for all products.")
 class StockValuationAPIView(GenericAPIView):
     serializer_class = StockValuationReportSerializer
     permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
@@ -29,6 +31,7 @@ class StockValuationAPIView(GenericAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+@extend_schema(tags=["Reports"], summary="Retrieve Daily Sales Report", description="Retrieve a report of daily sales for a specific date.")
 class DailySalesAPIView(GenericAPIView):
     serializer_class = DailySalesReportSerializer
     permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
@@ -44,6 +47,7 @@ class DailySalesAPIView(GenericAPIView):
         serializer = self.get_serializer(report_data)
         return Response(serializer.data)
 
+@extend_schema(tags=["Reports"], summary="Retrieve Monthly Sales Report", description="Retrieve a report of monthly sales for a specific year.")
 class MonthlySalesAPIView(GenericAPIView):
     serializer_class = MonthlySalesReportSerializer
     permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
@@ -57,6 +61,7 @@ class MonthlySalesAPIView(GenericAPIView):
         serializer = self.get_serializer(report_data, many=True)
         return Response(serializer.data)
 
+@extend_schema(tags=["Reports"], summary="Retrieve Retailer Dues Report", description="Retrieve a report of outstanding dues for all retailers.")
 class RetailerDuesAPIView(GenericAPIView):
     serializer_class = RetailerDuesReportSerializer
     permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
@@ -66,6 +71,7 @@ class RetailerDuesAPIView(GenericAPIView):
         serializer = self.get_serializer(report_data, many=True)
         return Response(serializer.data)
 
+@extend_schema(tags=["Reports"], summary="Retrieve Purchase History Report", description="Retrieve a report of purchase history for a specific period.")
 class PurchaseHistoryAPIView(GenericAPIView):
     permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
      
@@ -98,6 +104,7 @@ class PurchaseHistoryAPIView(GenericAPIView):
         serializer = self.get_serializer(report_data, many=True)    
         return Response(serializer.data)
 
+@extend_schema(tags=["Reports"], summary="Retrieve Low Stock Report", description="Retrieve a report of products with low stock levels.")
 class LowStockAPIView(APIView):
     permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
 

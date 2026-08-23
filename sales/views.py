@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -12,7 +12,15 @@ from sales.serializers import SaleSerializer
 from sales.services import InvoiceService
 from common.permissions import IsSuperAdminOrSeller
 
-
+@extend_schema(tags=["Sales"])
+@extend_schema_view(
+    list=extend_schema(summary="List All Sales", description="Retrieve a list of all sales."),
+    retrieve=extend_schema(summary="Retrieve Sale", description="Retrieve a specific sale by ID."),
+    create=extend_schema(summary="Create Sale", description="Create a new sale."),
+    update=extend_schema(summary="Update Sale", description="Update an existing sale by ID."),
+    partial_update=extend_schema(summary="Partial Update Sale", description="Partially update an existing sale by ID."),
+    destroy=extend_schema(summary="Delete Sale", description="Delete a specific sale by ID."),
+)
 class SaleViewSet(viewsets.ModelViewSet):
     queryset = Sale.objects.all()
     permission_classes = [IsAuthenticated, IsSuperAdminOrSeller]
@@ -32,6 +40,8 @@ class SaleViewSet(viewsets.ModelViewSet):
     @extend_schema(
         request=PaymentCreateSerializer,
         responses={200: PaymentSerializer(many=True), 201: PaymentSerializer},
+        summary="Manage Payments for Sale",
+        description="Retrieve a list of payments for a specific sale or record a new payment for that sale."
     )
     @action(detail=True, methods=["get", "post"], url_path="payments")
     def payments(self, request, pk=None):
@@ -58,6 +68,11 @@ class SaleViewSet(viewsets.ModelViewSet):
         )
 
     # GET /sales/{pk}/pdf/ – generate a PDF for the sale
+    @extend_schema(
+        summary="Generate Sale Invoice PDF",
+        description="Generate a PDF invoice for a specific sale.",
+        responses={200: "PDF file", 404: "Invoice not found."}
+    )
     @action(detail=True, methods=["get"], url_path="pdf")
     def pdf(self, request, pk):
         sale = self.get_object()
