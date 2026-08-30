@@ -64,4 +64,4 @@ class LowStockReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ["product_id", "product_name", "current_stock", "low_stock_threshold", "is_low_stock"]
+        fields = ["product_id", "product_name", "current_stock", "low_stock_threshold"]

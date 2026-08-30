@@ -2,10 +2,16 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
 from common.permissions import IsSuperAdmin
 
-from .serializers import CurrentUserSerializer, SellerRegistrationSerializer
+from .serializers import MyTokenObtainPairSerializer, CurrentUserSerializer, SellerRegistrationSerializer
 from .services import AccountService
+
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
