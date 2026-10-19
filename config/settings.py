@@ -18,6 +18,7 @@ from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 load_dotenv(BASE_DIR / ".env")
 
 # Quick-start development settings - unsuitable for production
@@ -27,7 +28,10 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv(
+    "DJANGO_ALLOWED_HOSTS", 
+    "localhost,127.0.0.1"
+).split(",")
 
 
 # Application definition
@@ -83,16 +87,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5174",
-# ]
 
-# CSRF_TRUSTED_ORIGINS = [
-#     "http://localhost:5174",
-# ]
-# CORS_ALLOWED_ORIGINS = ["http://localhost:5174"]
-CSRF_TRUSTED_ORIGINS = ["http://localhost:5174"]
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = os.getenv(
+    "DJANGO_CORS_ALLOWED_ORIGINS", 
+    "http://localhost:5174,http://localhost:5173"
+).split(",")
+
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "DJANGO_CSRF_TRUSTED_ORIGINS", 
+    "http://localhost:5174,http://localhost:5173"
+).split(",")
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
@@ -129,10 +133,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "accounts.User"
 
-#to be removed llater. just for development purpose
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }
 
 REST_FRAMEWORK = {
