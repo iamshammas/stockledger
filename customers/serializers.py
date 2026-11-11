@@ -12,5 +12,5 @@ from .models import Retailer
 class RetailerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Retailer
-        fields = ["retailer_name", "shop_name", "phone", "address", "credit_balance", "is_active"]
+        fields = ["id", "retailer_name", "shop_name", "phone", "email", "address", "credit_balance", "is_active"]
         read_only_fields = ("tenant","id", "credit_balance", "is_active")
